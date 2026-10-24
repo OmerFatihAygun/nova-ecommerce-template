@@ -20,7 +20,7 @@ Nova is a **front-end template** (JavaScript / TypeScript), not a platform theme
   admin is a static single-page app or a Node server.
 * Stack: Nuxt 3, Vue 3, TypeScript, Pinia, Tailwind CSS 4 (no Bootstrap, no jQuery),
   `@nuxtjs/i18n`, Vitest. Icons are inline SVG (no icon font); fonts are self-hosted
-  (Inter and Plus Jakarta Sans via `@fontsource`), so nothing is loaded from Google at run time.
+  (Inter and Plus Jakarta Sans as variable fonts via `@fontsource-variable`), so nothing is loaded from Google at run time.
 * It ships **demo data**, not a shop back end. To sell real products you connect your own API
   (see [Connecting a real backend](#7-connecting-a-real-backend)) or keep the demo for a prototype.
 
@@ -224,8 +224,9 @@ Copy `.env.example` to `.env` and fill in only what you use. Nothing is required
 ### Brand colour and design tokens
 
 All design tokens are CSS variables at the top of `assets/css/main.css` in each app. To
-rebrand, change the `--color-brand-50 … --color-brand-900` scale (the default is orange,
-`#ff5e00` at 600). Radii, shadows, fonts (`--font-sans`, `--font-display`) and spacing
+rebrand, change the `--color-brand-50 … --color-brand-900` scale (the default is orange; the
+logo is `#ff5e00`, and `--color-brand-600` is `#cc4a00`, the same hue darkened so white text on it
+reaches the 4.5:1 contrast of WCAG AA — keep that ratio when you choose your own). Radii, shadows, fonts (`--font-sans`, `--font-display`) and spacing
 tokens live in the same block. Update `theme-color` in the storefront's `nuxt.config.ts`
 and replace `public/favicon.svg`, `apple-touch-icon.png` and `og-default.png`.
 
@@ -573,6 +574,43 @@ Any Node-capable host works (a VPS, Render, Railway, Fly.io, Google Cloud Run, .
 Set `NUXT_PUBLIC_SITE_URL` to the public address. Security headers are set in
 `nuxt.config.ts`; the Content-Security-Policy is **report-only** — see the comment there
 before switching it to enforcing.
+
+### Performance
+
+The storefront is built to score well in Lighthouse on a phone. What it does, and what to keep doing
+when you add pages:
+
+* **Images.** `SafeImage` serves WebP through the image optimiser and sends each screen size its own
+  file. Give every image slot a `sizes` value (`sizes="xs:176px sm:224px lg:240px"` — the width
+  the image is shown at, from that screen size up) so a phone is not sent the desktop file, and set
+  `width` / `height` so the page does not jump. The largest image on a page (the first home slide) is
+  preloaded with `preload`; the first cards of a list use `priority` / `loading="eager"`. Everything
+  else stays `loading="lazy"`.
+* **Below the first screen.** Sections that start below the first screen are rendered by the server,
+  but laid out and made interactive only when the visitor scrolls near them: use
+  `<LazyMySection :hydrate-on-visible="HYDRATE_AHEAD" class="defer-render [--defer-h:500px]" />`
+  (`--defer-h` is the height reserved for the section — set it close to the real height; see
+  `.defer-render` in `assets/css/main.css` and `pages/index.vue`). Leave the first screen as it is.
+* **Fonts.** Inter and Plus Jakarta Sans are variable fonts served from your own domain (one file per
+  script covers every weight). Do not add more families or weights without need.
+* **Code.** Heavy, rarely used components (modals, drawers, the footer) are `Lazy*` components. Pages
+  prefetch the next page when the pointer or keyboard focus reaches a link, not when the link scrolls
+  into view (`experimental.defaults.nuxtLink` in `nuxt.config.ts`).
+* **Caching and compression (your host).** Serve text with Brotli (or gzip) and give the
+  fingerprinted build output a long life, for example on Cloudflare Pages / Netlify in `_headers`:
+
+  ```
+  /_nuxt/*
+    Cache-Control: public, max-age=31536000, immutable
+  /_ipx/*
+    Cache-Control: public, max-age=31536000, immutable
+  ```
+
+  (`/_ipx/` only exists in a static export. With a Node server, put a CDN in front and cache `/_nuxt/`.)
+* **Measuring.** Run Lighthouse in a private window with extensions off, on the *mobile* setting,
+  against the deployed site (not `npm run dev`), and take the median of a few runs — single runs differ
+  by several points. Pages that must not be indexed (sign-in, cart, checkout, account, and the whole
+  admin) send `noindex`, which Lighthouse reports as an SEO failure by design.
 
 ### Hosting a live demo (both apps, static, free)
 

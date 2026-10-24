@@ -29,6 +29,17 @@
   the download keeps the SVG artwork in every slot. Home hero and side banner artwork no
   longer carries text, because the page writes the headline over it
 
+**Performance and accessibility**
+* Faster first screen: responsive WebP images with per-screen sizes, the first home slide preloaded,
+  variable fonts, sections below the first screen hydrate only when scrolled near
+  (`.defer-render` + `hydrate-on-visible`), the demo database builds its tables on first use,
+  locale text is no longer bundled twice, and links prefetch on hover/focus instead of on sight
+* Product cards load only their first photo until hovered (the hover gallery used to download every photo)
+* Accessibility: the brand orange is a shade darker (`#CC4A00`) so white text on it reaches the 4.5:1
+  contrast of WCAG AA, carousel dots have 24 px touch targets, accessible names start with the text
+  shown on the control (WCAG 2.5.3)
+* The demo build uses WebP photos (`tools/convert_demo_photos.mjs`)
+
 **Languages**
 * The storefront is fully translated into **Turkish**: every label, message, help article, legal
   page, category name and campaign text (about 2,000 messages). English stays the default

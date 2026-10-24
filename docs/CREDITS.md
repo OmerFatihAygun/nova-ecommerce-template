@@ -15,8 +15,8 @@ package — `npm install` downloads them — and each stays under its own licenc
 | [`@nuxtjs/i18n`](https://i18n.nuxtjs.org) | both | MIT | Translations (6 languages) |
 | [`@nuxt/image`](https://image.nuxt.com) | both | MIT | Image component |
 | [`@nuxt/fonts`](https://fonts.nuxt.com) | storefront | MIT | Font loading |
-| [`@fontsource/inter`](https://fontsource.org/fonts/inter) | both | OFL-1.1 | Inter typeface |
-| [`@fontsource/plus-jakarta-sans`](https://fontsource.org/fonts/plus-jakarta-sans) | both | OFL-1.1 | Plus Jakarta Sans typeface |
+| [`@fontsource-variable/inter`](https://fontsource.org/fonts/inter) | both | OFL-1.1 | Inter typeface (variable font) |
+| [`@fontsource-variable/plus-jakarta-sans`](https://fontsource.org/fonts/plus-jakarta-sans) | both | OFL-1.1 | Plus Jakarta Sans typeface (variable font) |
 | [`i18n-iso-countries`](https://github.com/michaelwittig/node-i18n-iso-countries) | storefront | MIT | Country names |
 | [TypeScript](https://www.typescriptlang.org), `vue-tsc` | both (dev) | Apache-2.0 / MIT | Type checking |
 | [Vitest](https://vitest.dev), `@vue/test-utils`, `happy-dom`, `@pinia/testing`, `@vitejs/plugin-vue` | storefront (dev) | MIT | Unit tests |
